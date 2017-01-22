@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app">
 <head>
 	<meta charset="UTF-8">
 	<title>Impossible Puzzle</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>	
 	<style>
 		* {
 			font-family: Helvetica;
@@ -60,431 +60,50 @@
 			top: 10px;
 			left: 10px;
 			font-size: .5em;
+			z-index: 1;
 		}
 		.piezas span {
 			font-size: 2em;
 			font-family: Helvetica;
 		}
+		#spinner {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, .5);
+			color: #fff;
+			font-size: 5em;
+			display: -webkit-flex;
+			display: -moz-flex;
+			display: -ms-flex;
+			display: -o-flex;
+			display: flex;			
+			-ms-align-items: center;
+			align-items: center;
+			justify-content: center;
+		 }
+		 img {
+				width: 200px;
+				height: 200px;											
+				transition: all 5s;
+		}		
+		 .deg90 {
+			transform: rotate(-90deg); 
+		 }
+		 .deg180 {
+			 transform: rotate(-180deg);
+		 }
+		 .deg270 {
+			 transform: rotate(-270deg);			 
+		 }
+		 .deg360 {
+			 transform: rotate(-360deg);			 
+		 }
 	</style> 
 </head>
-<body>
-	<script>
-
-		// f = flam
-		// g = grossa
-		// p = prima
-		// r = regadora
-		// rt = regadora troll (no es pot encaixar enlloc)
-
-		var piezas =
-		[
-			[
-				'f2', 'g2', 'r1', 'p1'
-			],
-			[
-				'f2', 'p2', 'r1', 'g1'
-			],
-			[
-				'f2', 'g2', 'rt', 'p1'
-			],
-			[
-				'r2', 'g2', 'f1', 'p1'
-			],
-			[
-				'r2', 'f1', 'p1', 'g1'
-			],
-			[
-				'r1', 'g1', 'p1', 'f2'
-			],
-			[
-				'f2', 'g2', 'p1', 'r2'
-			],
-			[
-				'p2', 'r1', 'f2', 'g1'				
-			],
-			[
-				'p2', 'f1', 'g1', 'r2'
-			]
-		];
-
-		function shuffle(array) {
-			var currentIndex = array.length, temporaryValue, randomIndex;
-
-			// While there remain elements to shuffle...
-			while (0 !== currentIndex) {
-
-			// Pick a remaining element...
-			randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex -= 1;
-
-			// And swap it with the current element.
-			temporaryValue = array[currentIndex];
-			array[currentIndex] = array[randomIndex];
-			array[randomIndex] = temporaryValue;
-			}
-			return array;
-		}
-
-		function doTheyFit(first, second) {
-			if
-				(
-					(first == 'f1' && second == 'f2') ||
-					(first == 'f2' && second == 'f1') ||
-					(first == 'g1' && second == 'g2') ||
-					(first == 'g2' && second == 'g1') ||
-					(first == 'p1' && second == 'p2') ||
-					(first == 'p2' && second == 'p1') ||
-					(first == 'r1' && second == 'r2') ||
-					(first == 'r2' && second == 'r1')
-				)
-			{
-				return true;
-			} 
-			else 
-			{
-				return false;
-			}
-		}
-
-		var completo = false;
-		var resultado = [];
-		var intentos = 0;
-
-		main:
-		while(completo == false) {
-
-			intentos++;
-
-			var piezas = shuffle(piezas);
-			var pieza1 = piezas[0];
-			var pieza2 = piezas[1];
-			var pieza3 = piezas[2];
-			var pieza4 = piezas[3];
-			var pieza5 = piezas[4];
-			var pieza6 = piezas[5];
-			var pieza7 = piezas[6];
-			var pieza8 = piezas[7];
-			var pieza9 = piezas[8];
-
-			pieza1: for(posicion1 in pieza1) {
-				pieza2: for(posicion2 in pieza2) {
-					var imagen1 = pieza1[posicion1];
-					var imagen2 = pieza2[posicion2];
-					if
-					(
-						(imagen1 == 'f1' && imagen2 == 'f2') ||
-						(imagen1 == 'f2' && imagen2 == 'f1') ||
-						(imagen1 == 'g1' && imagen2 == 'g2') ||
-						(imagen1 == 'g2' && imagen2 == 'g1') ||
-						(imagen1 == 'p1' && imagen2 == 'p2') ||
-						(imagen1 == 'p2' && imagen2 == 'p1') ||
-						(imagen1 == 'r1' && imagen2 == 'r2') ||
-						(imagen1 == 'r2' && imagen2 == 'r1')
-					)
-					{
-						// Añade el resultado
-						resultado.push(imagen1);
-						resultado.push(imagen2);
-
-						//Muestra el resultado
-						// console.log('Las piezas son:');
-						// console.log(piezas);
-						// console.log('El resultado es: '+resultado);
-						break pieza1;
-						break pieza2;
-					}					
-				}
-			}	
-
-			if(resultado.length !== 2) {
-				continue main;
-			}
-
-			// Determina las imágenes 3, 9 y 13
-
-			var imagen2 = resultado[1];
-			var index = pieza2.indexOf(imagen2);
-			var imagen3;
-			var imagen9;
-
-			switch (index) {
-				case 0:
-					imagen3 = pieza2[2];
-					imagen9 = pieza2[3];
-					break;
-				case 1:
-					imagen3 = pieza2[3];
-					imagen9 = pieza2[0];
-					break;
-				case 2:
-					imagen3 = pieza2[0];
-					imagen9 = pieza2[1];
-					break;
-				case 3:
-					imagen3 = pieza2[1];
-					imagen9 = pieza2[2];
-					break;
-			}
-
-			var letraImagen9 = imagen9.slice(0,1);
-			console.log(imagen3);
-
-			var imagen13;
-			var index = pieza1.indexOf(imagen1);
-			switch (index) {
-				case 0:
-					imagen13 = pieza1[1];
-					break;
-				case 1:
-					imagen13 = pieza1[2];
-					break;
-				case 2:
-					imagen13 = pieza1[3];
-					break;
-				case 3:
-					imagen13 = pieza1[0];
-					break;
-			}
-
-			pieza3: for(posicion in pieza3) {
-				var imagen4 = pieza3[posicion];
-				// console.log('Imagen3 = '+imagen3);
-				// console.log('Imagen4 = '+imagen4);
-				if
-					(
-						(imagen3 == 'f1' && imagen4 == 'f2') ||
-						(imagen3 == 'f2' && imagen4 == 'f1') ||
-						(imagen3 == 'g1' && imagen4 == 'g2') ||
-						(imagen3 == 'g2' && imagen4 == 'g1') ||
-						(imagen3 == 'p1' && imagen4 == 'p2') ||
-						(imagen3 == 'p2' && imagen4 == 'p1') ||
-						(imagen3 == 'r1' && imagen4 == 'r2') ||
-						(imagen3 == 'r2' && imagen4 == 'r1')
-					)
-				{
-					// Añade el resultado
-					resultado.push(imagen3);
-					resultado.push(imagen4);
-
-					// Muestra el resultado
-					// console.log('El resultado es: '+resultado);
-					break pieza3;
-				}
-			}
-
-			if(resultado.length !== 4) {
-				resultado = [];
-				continue main;
-			} 
-
-			// Determina la imagen 5
-
-			var imagen4 = resultado[3];
-			var index = pieza3.indexOf(imagen4);
-			var imagen5;
-
-			switch (index) {
-				case 0:
-					imagen5 = pieza3[3];
-					break;
-				case 1:
-					imagen5 = pieza3[0];
-					break;
-				case 2:
-					imagen5 = pieza3[1];
-					break;
-				case 3:
-					imagen5 = pieza3[2];
-					break;
-			}
-
-			pieza4: for(posicion in pieza4) {
-				var imagen6 = pieza4[posicion];
-				var imagen7 = pieza4[Number(posicion) - 1];
-				var imagen23 = pieza4[Number(posicion) + 2];
-				if(imagen23 == undefined) {
-					if(posicion == 2) {
-					imagen23 = pieza4[0];
-				}
-					if(posicion == 3) {
-						imagen23 = pieza4[1];
-					}	
-				}			
-				if(imagen7 == undefined) {
-					imagen7 = pieza4[0];
-				}
-				if
-					(
-						(imagen5 == 'f1' && imagen6 == 'f2') ||
-						(imagen5 == 'f2' && imagen6 == 'f1') ||
-						(imagen5 == 'g1' && imagen6 == 'g2') ||
-						(imagen5 == 'g2' && imagen6 == 'g1') ||
-						(imagen5 == 'p1' && imagen6 == 'p2') ||
-						(imagen5 == 'p2' && imagen6 == 'p1') ||
-						(imagen5 == 'r1' && imagen6 == 'r2') ||
-						(imagen5 == 'r2' && imagen6 == 'r1')
-					)
-				{
-					// Añade el resultado
-					resultado.push(imagen5);
-					resultado.push(imagen6);
-
-					// Muestra el resultado
-					// console.log('El resultado es: '+resultado);
-					break pieza4;
-				}
-			}
-
-			if(resultado.length !== 6) {
-				resultado = [];
-				continue main;
-			}
-
-			pieza5: for(posicion in pieza5) {
-				var imagen8 = pieza5[posicion];
-				var imagen10 = pieza5[Number(posicion) - 1];
-				var imagen11 = pieza5[Number(posicion) + 2];
-				var imagen19 = pieza5[Number(posicion) + 1];
-				if(imagen19 == undefined) {
-					imagen19 = pieza5[0];
-					imagen11 = pieza5[1];
-				}
-				if(imagen11 == undefined) {
-					imagen11 = pieza5[0];
-				}	
-				if(imagen10 == undefined) {
-					imagen10 = pieza5[0];
-				}
-				if(doTheyFit(imagen9, imagen10) && doTheyFit(imagen7, imagen8)) {
-					// Añade el resultado
-					resultado.push(imagen7);
-					resultado.push(imagen8);
-
-					// Muestra el resultado
-					// console.log('El resultado es: '+resultado);
-					break pieza5;
-				}
-			}
-
-			if(resultado.length !== 8) {
-				resultado = [];
-				continue main;
-			}
-
-			pieza6: for(posicion in pieza6) {
-				var imagen12 = pieza6[posicion];
-				var imagen14 = pieza6[Number(posicion) - 1];
-				var imagen15 = pieza6[Number(posicion) + 1];
-				if(imagen14 == undefined) {
-					imagen14 = pieza5[0];
-				}
-				if(imagen15 == undefined) {
-					imagen15 = pieza5[0];
-				}
-				if(doTheyFit(imagen11, imagen12) && doTheyFit(imagen13, imagen14)) {
-					// Añade el resultado
-					resultado.push(imagen11);
-					resultado.push(imagen12);
-
-					// Muestra el resultado
-					// console.log('Las piezas son:');
-					// console.log(piezas);
-					// console.log('El resultado es: '+resultado);
-					break pieza6;
-				}
-			}
-
-			if(resultado.length !== 10) {
-				resultado = [];
-				continue main;
-			}
-
-			pieza7: for(posicion in pieza7) {
-				var imagen16 = pieza7[posicion];
-				var imagen16 = pieza7[posicion];
-				var imagen17 = pieza7[Number(posicion) + 1];
-				if(imagen17 == undefined) {
-					imagen17 = pieza7[0];
-				}
-				if(doTheyFit(imagen15, imagen16)) {
-					// Añade el resultado
-					resultado.push(imagen15);
-					resultado.push(imagen16);
-
-					// Muestra el resultado
-					// console.log('Las piezas son:');
-					// console.log(piezas);
-					// console.log('El resultado es: '+resultado);
-					break pieza7;
-				}
-			}
-
-			if(resultado.length !== 12) {
-				resultado = [];
-				continue main;
-			} 
-
-			pieza8: for(posicion in pieza8) {
-				var imagen18 = pieza8[posicion];
-				var imagen20 = pieza8[Number(posicion) + 1];
-				var imagen21 = pieza8[Number(posicion) + 2];
-				if(imagen20 == undefined) {
-					imagen20 = pieza8[0];
-					imagen21 = pieza8[1];
-				}
-				if(imagen21 == undefined) {
-					imagen21 = pieza8[0];
-				}
-				if(doTheyFit(imagen17, imagen18) && doTheyFit(imagen19, imagen20)) {
-					// Añade el resultado
-					resultado.push(imagen17);
-					resultado.push(imagen18);
-
-					// Muestra el resultado
-					// console.log('Las piezas son:');
-					// console.log(piezas);
-					// console.log('El resultado es: '+resultado);
-					break pieza8;
-				}
-			}
-
-			if(resultado.length !== 14) {
-				resultado = [];
-				continue main;
-			}
-
-			pieza9: for(posicion in pieza9) {
-				var imagen22 = pieza9[posicion];
-				var imagen24 = pieza9[Number(posicion) + 1];
-				if(imagen24 == undefined) {
-					imagen24 = pieza9[0];
-				}
-				if(doTheyFit(imagen21, imagen22) && doTheyFit(imagen23, imagen24)) {
-					// Añade el resultado
-					resultado.push(imagen21);
-					resultado.push(imagen22);
-
-					// Muestra el resultado
-					console.log('Las piezas son:');
-					console.log(piezas);
-					console.log('El resultado es: '+resultado);
-					break pieza9;
-				}
-			}
-
-			if(resultado.length !== 16) {
-				resultado = [];
-				continue main;
-			} else {
-				completo = true;
-			}
-
-			console.log('Número de intentos: ' + intentos);
-		
-		} // main
-
-	</script>
-
+<body>	
 	<div class="container">
 		<h1 class="intentos">Número de intentos: </h1>
 		<div class="divLeft">
@@ -492,23 +111,27 @@
 				<div class="pieza">1</div>
 				<div class="right" data-imagen="1"></div>
 				<div class="bottom" data-imagen="13"></div>
+				<img src="">
 			</div>
 			<div class="div2">
 				<div class="pieza">2</div>
 				<div class="left" data-imagen="2"></div>
 				<div class="right" data-imagen="3"></div>
 				<div class="bottom" data-imagen="9"></div>
+				<img src="">
 			</div>
 			<div class="div3">
 				<div class="pieza">3</div>
 				<div class="left" data-imagen="4"></div>
 				<div class="bottom" data-imagen="5"></div>
+				<img src="">
 			</div>
-			<div class="div4">
+			<div class="div6">
 				<div class="pieza">6</div>
 				<div class="top" data-imagen="14"></div>
 				<div class="right" data-imagen="12"></div>
 				<div class="bottom" data-imagen="15"></div>
+				<img src="">
 			</div>
 			<div class="div5">
 				<div class="pieza">5</div>
@@ -516,28 +139,33 @@
 				<div class="left" data-imagen="11"></div>
 				<div class="top" data-imagen="10"></div>
 				<div class="right" data-imagen="8"></div>
+				<img src="">
 			</div>
-			<div class="div6">
+			<div class="div4">
 				<div class="pieza">4</div>
 				<div class="bottom" data-imagen="23"></div>
 				<div class="top" data-imagen="6"></div>
 				<div class="left" data-imagen="7"></div>
+				<img src="">
 			</div>
 			<div class="div7">
 				<div class="pieza">7</div>
 				<div class="right" data-imagen="17"></div>
 				<div class="top" data-imagen="16"></div>
+				<img src="">
 			</div>
 			<div class="div8">
 				<div class="pieza">8</div>
 				<div class="top" data-imagen="20"></div>
 				<div class="left" data-imagen="18"></div>
 				<div class="right" data-imagen="21"></div>
+				<img src="">
 			</div>
 			<div class="div9">
 				<div class="pieza">9</div>
 				<div class="left" data-imagen="22"></div>
 				<div class="top" data-imagen="24"></div>
+				<img src="">
 			</div>
 		</div>
 		<div class="divRight">
@@ -545,27 +173,54 @@
 		</div>
 	</div>
 
+	<div id="spinner">
+		<div>Wait a sec...</div>
+	</div>
+
 	<script>
 		
-		// $.fn.filterByData = function(prop, val) {
-		//     return this.filter(
-		//         function() { return $(this).data(prop)==val; }
-		//     );
-		// }
+		var w;
 
-		var text = $('.intentos').text() + intentos;
-		$('.intentos').text(text);
+		startWorker();
+		$('#spinner').show();
 
-		$('div').each(function(){
-			var data = $(this).data('imagen');
-			data = 'imagen' + data;
-			$(this).text(window[data]);
-		})
+		function startWorker() {
+			if(typeof(Worker) !== "undefined") {
+				if(typeof(w) == "undefined") {
+					w = new Worker("web_workers.js");
+				}
+				w.onmessage = function(event) {	
+					$('#spinner').hide();
+					var text = $('.intentos').text() + event.data.intentos;
+					$('.intentos').text(text);
 
-		for(pieza in piezas) {
-			var piezaToPrint = Number(pieza) + 1;
-			$('.piezas').append('<p><span>'+piezaToPrint+'. </span>'+piezas[pieza]+'</p>');
-		}
+					console.log(event.data);
+
+					var piezas = event.data.piezas;
+					var rotaciones = event.data.rotaciones;
+					var resultado = event.data.resultado;
+
+					for(var i = 0; i < piezas.length; i++) {
+						var div = $(`.div${i + 1}`);
+						div.find('img').attr('src', `/imgs/peca_${piezas[i]}.png`);
+						div.find('img').addClass(`deg${rotaciones[i]}`);					
+					}	
+
+					/*$('div[data-imagen]').each(function(){
+						var data = $(this).data('imagen');
+						$(this).text(resultado[data]);
+					});*/
+
+				};
+			} else {
+				document.getElementById("result").innerHTML = "Sorry! No Web Worker support.";
+			}
+		}		
+
+		function stopWorker() {
+			w.terminate();
+			w = undefined;
+		}		
 
 	</script>
 </body>
